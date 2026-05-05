@@ -2,8 +2,8 @@
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
     <Identity Id="CopilotPromptExtension2.a5ad44be-2ec6-4e7a-82e1-9593f6bdea32" Version="1.0" Language="en-US" Publisher="LG" />
-    <DisplayName>CopilotPromptExtension2</DisplayName>
-    <Description>Empty VSIX Project.</Description>
+    <DisplayName>Copilot Prompt Scaffold</DisplayName>
+    <Description>Builds structured Copilot prompts from existing solution context to scaffold parallel domains.</Description>
   </Metadata>
   <Installation>
     <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[17.0, )">

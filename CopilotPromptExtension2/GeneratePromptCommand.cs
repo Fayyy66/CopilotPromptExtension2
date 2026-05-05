@@ -4,9 +4,8 @@ using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using System;
 using System.ComponentModel.Design;
-using System.Globalization;
-using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using Task = System.Threading.Tasks.Task;
 
 namespace CopilotPromptExtension2
@@ -119,16 +118,16 @@ namespace CopilotPromptExtension2
                 return;
             }
 
-            var message = new System.Text.StringBuilder();
-            message.AppendLine("Solution: " + solution.FullName);
-            message.AppendLine();
+            var snapshot = new ProjectContextSnapshot(solution.FullName);
+            snapshot.GitContext = new GitContextProvider().GetContext(solution.FullName);
 
             foreach (Project project in solution.Projects)
             {
                 if (project == null)
                     continue;
 
-                message.AppendLine("Project: " + project.Name);
+                var projectContext = new ProjectContextInfo(project.Name);
+                snapshot.Projects.Add(projectContext);
 
                 try
                 {
@@ -136,41 +135,55 @@ namespace CopilotPromptExtension2
                     {
                         foreach (ProjectItem item in project.ProjectItems)
                         {
-                            AppendProjectItem(item, message, "  ");
+                            AppendProjectItem(item, projectContext, 0);
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    message.AppendLine("  [Error reading project items: " + ex.Message + "]");
+                    projectContext.Items.Add(new ProjectItemContextInfo("[Error reading project items: " + ex.Message + "]", "Error", 0));
+                }
+            }
+
+            DomainScaffoldingRequest request;
+            using (var form = new PromptInputForm())
+            {
+                if (form.ShowDialog() != DialogResult.OK)
+                {
+                    return;
                 }
 
-                message.AppendLine();
+                request = form.Request;
             }
+
+            var prompt = new PromptTemplateBuilder().Build(request, snapshot);
+
+            Clipboard.SetText(prompt);
 
             VsShellUtilities.ShowMessageBox(
                 this.package,
-                message.ToString(),
-                "Solution Explorer Info",
+                prompt + Environment.NewLine + Environment.NewLine + "The prompt has been copied to the clipboard.",
+                "Copilot Scaffold Prompt",
                 OLEMSGICON.OLEMSGICON_INFO,
                 OLEMSGBUTTON.OLEMSGBUTTON_OK,
                 OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
         }
-        private void AppendProjectItem(ProjectItem item, System.Text.StringBuilder message, string indent)
+
+        private void AppendProjectItem(ProjectItem item, ProjectContextInfo projectContext, int depth)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
             if (item == null)
                 return;
 
-            message.AppendLine(indent + "- " + item.Name);
+            projectContext.Items.Add(new ProjectItemContextInfo(item.Name, item.Kind, depth));
 
             if (item.ProjectItems == null)
                 return;
 
             foreach (ProjectItem childItem in item.ProjectItems)
             {
-                AppendProjectItem(childItem, message, indent + "  ");
+                AppendProjectItem(childItem, projectContext, depth + 1);
             }
         }
     }

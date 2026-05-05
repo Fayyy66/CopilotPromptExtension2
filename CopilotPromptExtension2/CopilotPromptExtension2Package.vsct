@@ -56,7 +56,7 @@
         <Parent guid="guidCopilotPromptExtension2PackageCmdSet" id="MyMenuGroup" />
         <Icon guid="guidImages" id="bmpPic1" />
         <Strings>
-          <ButtonText>Invoke GeneratePromptCommand</ButtonText>
+          <ButtonText>Generate Copilot Scaffold Prompt</ButtonText>
         </Strings>
       </Button>
     </Buttons>

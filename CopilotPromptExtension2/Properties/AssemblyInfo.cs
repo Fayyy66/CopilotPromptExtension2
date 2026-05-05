@@ -6,10 +6,10 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("CopilotPromptExtension2")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Visual Studio extension prototype for structured Copilot scaffold prompts.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("CopilotPromptExtension2")]
+[assembly: AssemblyCompany("University of Auckland")]
+[assembly: AssemblyProduct("Copilot Prompt Scaffold")]
 [assembly: AssemblyCopyright("")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
